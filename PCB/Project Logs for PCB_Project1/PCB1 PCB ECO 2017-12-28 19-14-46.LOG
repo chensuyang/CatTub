@@ -1,0 +1,7 @@
+Removed Pin From Net: NetName=PTC_OUT Pin=R7-1
+Removed Pin From Net: NetName=PTC_OUT Pin=U1-16
+Change Component Designator: OldDesignator=SW1 NewDesignator=JP12
+Change Component Designator: OldDesignator=SW2 NewDesignator=JP13
+Added Pin To Net: NetName=PTC_OUT_PIN Pin=R7-1
+Added Pin To Net: NetName=PTC_OUT_PIN Pin=U1-16
+Added Net: Name=PTC_OUT_PIN

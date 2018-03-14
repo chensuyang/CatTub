@@ -1,0 +1,157 @@
+C51 COMPILER V9.52.0.0   TM1620                                                            02/22/2018 17:57:51 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE TM1620
+OBJECT MODULE PLACED IN tm1620.OBJ
+COMPILER INVOKED BY: C:\Keil_v4\C51\BIN\C51.EXE tm1620.c LARGE OPTIMIZE(2,SIZE) BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include "stc15.h"
+   2          #include "intrins.h"
+   3          #include "tm1620.h"
+   4          #include "math.h"
+   5          
+   6          sbit TM1620_CLK=P1^5;
+   7          sbit TM1620_STB=P1^4;
+   8          sbit TM1620_DIN=P1^3;
+   9          
+  10          const unsigned char digitron_table[18]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f,0x77,0x7c,0x39,0
+             -x5e,0x79,0x71,0x00,0x40};//数码管0-10 A-F
+  11          
+  12          void Delay2us()   //@20.000MHz
+  13          {
+  14   1        unsigned char i;
+  15   1      
+  16   1        _nop_();
+  17   1        _nop_();
+  18   1        i = 7;
+  19   1        while (--i);
+  20   1      }
+  21          
+  22          void TM1620_Write_Byte(unsigned char byte_data)//向TM1620中写1字节,不涉及STB引脚控制
+  23          {
+  24   1        unsigned char i;
+  25   1        TM1620_CLK=0;
+  26   1        Delay2us();
+  27   1        for(i=0;i<8;i++)
+  28   1        {
+  29   2          TM1620_DIN=byte_data&(0x01<<i);
+  30   2          _nop_();
+  31   2          _nop_();
+  32   2          TM1620_CLK=1;
+  33   2          _nop_();
+  34   2          _nop_();
+  35   2          TM1620_CLK=0;
+  36   2        } 
+  37   1      }
+  38          
+  39          void TM1620_Write_Command_Only(unsigned char command_data)//向TM1620中写命令,不带数据,涉及STB引脚控制
+  40          {
+  41   1        TM1620_STB=0;
+  42   1        TM1620_Write_Byte(command_data);
+  43   1        Delay2us();
+  44   1        TM1620_STB=1;
+  45   1        Delay2us();
+  46   1      }
+  47          
+  48          void TM1620_Write_Command_And_Data(unsigned char command_data,unsigned char _data)//向TM1620中写命令以及一
+             -字节数据,涉及STB引脚控制
+  49          {
+  50   1        TM1620_STB=0;
+  51   1        TM1620_Write_Byte(command_data);
+  52   1        Delay2us();
+  53   1        TM1620_Write_Byte(_data);
+C51 COMPILER V9.52.0.0   TM1620                                                            02/22/2018 17:57:51 PAGE 2   
+
+  54   1        Delay2us();
+  55   1        TM1620_STB=1;
+  56   1        Delay2us();
+  57   1      }
+  58          
+  59          void TM1620_Init(void)//初始化设置TM1620
+  60          {
+  61   1        TM1620_Write_Command_Only(0x02);//设置显示模式为6位8段
+  62   1        TM1620_Write_Command_Only(0x44);//设置数据命令为写数据到显示寄存器,并且传输采用固定地址模式
+  63   1        TM1620_Write_Number(0,16,0);
+  64   1        TM1620_Write_Number(1,16,0);
+  65   1        TM1620_Write_Number(2,16,0);
+  66   1        TM1620_Write_Number(3,16,0);
+  67   1        
+  68   1      }
+  69          
+  70          void TM1620_Write_Digitron_Data(unsigned char pos,unsigned char digitron_data)//向TM1620显存中指定数码管位
+             -写入数码管数据
+  71          {
+  72   1        TM1620_Write_Command_And_Data((0xC0+(pos*2)),digitron_data);
+  73   1      }
+  74          
+  75          void TM1620_display_on(unsigned char light_intensity)//TM1620开显示
+  76          {
+  77   1        TM1620_Write_Command_Only(0x80+0x08+light_intensity);
+  78   1      }
+  79          void TM1620_display_off(void)//TM1620关显示
+  80          {
+  81   1        TM1620_Write_Command_Only(0x80);
+  82   1      }
+  83          
+  84          void TM1620_Write_Number(unsigned char pos,unsigned number,bit point)//向TM1620显存中指定数码管位写数字
+  85          {
+  86   1        if(point)TM1620_Write_Digitron_Data(pos,digitron_table[number]|0x80);
+  87   1        else TM1620_Write_Digitron_Data(pos,digitron_table[number]);
+  88   1      }
+  89            
+  90          void TM1620_Show_Temperature(float temperature)//TM1620显示温度
+  91          {
+  92   1        unsigned char tmp[3]={0};
+  93   1        if(temperature<-0.009)//如果温度是负数
+  94   1        {
+  95   2          tmp[0]=digitron_table[17];
+  96   2          if(fabs(temperature)<10)
+  97   2          {
+  98   3            tmp[1]=digitron_table[(unsigned int)fabs(temperature)%10]|0x80;
+  99   3            tmp[2]=digitron_table[(unsigned int)fabs(temperature*10)%10];
+ 100   3          }
+ 101   2          else
+ 102   2          {
+ 103   3            tmp[1]=digitron_table[(unsigned int)fabs(temperature)/10];
+ 104   3            tmp[2]=digitron_table[(unsigned int)fabs(temperature)%10];
+ 105   3          }
+ 106   2        }
+ 107   1        else
+ 108   1        {
+ 109   2          if(fabs(temperature)<10)
+ 110   2          {
+ 111   3            tmp[0]=digitron_table[(unsigned int)fabs(temperature)%10]|0x80;
+ 112   3            tmp[1]=digitron_table[(unsigned int)fabs(temperature*10)%10];
+ 113   3            tmp[2]=digitron_table[(unsigned int)fabs(temperature*100)%10];
+ 114   3          }
+C51 COMPILER V9.52.0.0   TM1620                                                            02/22/2018 17:57:51 PAGE 3   
+
+ 115   2          else
+ 116   2          {
+ 117   3            tmp[0]=digitron_table[(unsigned int)fabs(temperature)/10];
+ 118   3            tmp[1]=digitron_table[(unsigned int)fabs(temperature)%10]|0x80;
+ 119   3            tmp[2]=digitron_table[(unsigned int)fabs(temperature*10)%10];
+ 120   3          }
+ 121   2        }
+ 122   1        TM1620_Write_Digitron_Data(0,tmp[0]);
+ 123   1        TM1620_Write_Digitron_Data(1,tmp[1]);
+ 124   1        TM1620_Write_Digitron_Data(2,tmp[2]);
+ 125   1      
+ 126   1      }
+ 127          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    937    ----
+   CONSTANT SIZE    =      3    ----
+   XDATA SIZE       =     18      19
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       1
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

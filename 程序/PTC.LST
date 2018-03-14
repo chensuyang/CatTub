@@ -1,0 +1,66 @@
+C51 COMPILER V9.52.0.0   PTC                                                               02/22/2018 17:57:51 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE PTC
+OBJECT MODULE PLACED IN PTC.OBJ
+COMPILER INVOKED BY: C:\Keil_v4\C51\BIN\C51.EXE PTC.c LARGE OPTIMIZE(2,SIZE) BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include "PTC.h"
+   2          #include "stc15.h"
+   3          sbit ptc_pin=P1^1;
+   4          
+   5          #define CCP_S0 0x10                 //P_SW1.4
+   6          #define CCP_S1 0x20                 //P_SW1.5
+   7          
+   8          void PTC_Init(void)
+   9          {
+  10   1        ACC = P_SW1;
+  11   1        ACC &= ~(CCP_S0 | CCP_S1);      //CCP_S0=0 CCP_S1=0
+  12   1        P_SW1 = ACC;                    //(P1.2/ECI, P1.1/CCP0, P1.0/CCP1, P3.7/CCP2)
+  13   1        
+  14   1          CCON = 0;                       //初始化PCA控制寄存器
+  15   1                                          //PCA定时器停止
+  16   1                                          //清除CF标志
+  17   1                                          //清除模块中断标志
+  18   1          CL = 0;                         //复位PCA寄存器
+  19   1          CH = 0;
+  20   1          CMOD = 0x02;                    //设置PCA时钟源
+  21   1                                          //禁止PCA定时器溢出中断
+  22   1          PCA_PWM1 = 0x00;                //PCA模块0工作于8位PWM
+  23   1          CCAP1H = CCAP0L = 0x20;         //PWM0的占空比为87.5% ((100H-20H)/100H)
+  24   1          CCAPM1 = 0x42;                  //PCA模块0为8位PWM模式
+  25   1          CR = 1;                         //PCA定时器开始工作
+  26   1      
+  27   1      }
+  28          
+  29          void PTC_On(float duty)
+  30          {
+  31   1        P1M0 |= 0x02;  //设置P1.1为推挽输出模式
+  32   1        P1M1 |= 0x00;
+  33   1        PCA_PWM1 = 0x00;                //PCA模块1工作于8位PWM
+  34   1        CCAP1H = CCAP0L = 0x100-(duty/100*0x100);         //PWM1的占空比为87.5% ((100H-20H)/100H)
+  35   1        CCAPM1 = 0x42;                  //PCA模块0为8位PWM模式
+  36   1      }
+  37          
+  38          void PTC_Off(void)
+  39          {
+  40   1        PCA_PWM1 = 0x00;                //PCA模块1工作于8位PWM
+  41   1        CCAP1H = CCAP0L = 0x100-(0/100*0x100);         //PWM1的占空比为87.5% ((100H-20H)/100H)
+  42   1        CCAPM1 = 0x42;                  //PCA模块1为8位PWM模式
+  43   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    119    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----       4
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,23 @@
+Removed Pin From Net: NetName=DGND Pin=D1-1
+Removed Pin From Net: NetName=5V Pin=L1-2
+Removed Pin From Net: NetName=5V Pin=R2-2
+Removed Pin From Net: NetName=DGND Pin=R3-1
+Removed Pin From Net: NetName=DGND Pin=U4-6
+Removed Pin From Net: NetName=NetC1_1 Pin=U4-7
+Removed Member From Class: ClassName=Sheet1 Member=D2
+Removed Member From Class: ClassName=Sheet1 Member=L1
+Removed Member From Class: ClassName=Sheet1 Member=R2
+Removed Member From Class: ClassName=Sheet1 Member=R3
+Removed Member From Class: ClassName=Sheet1 Member=U4
+Change Component Designator: OldDesignator=D2 NewDesignator=D1
+Added Component: Designator=V1(SOT223_L)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "BOM名称"; Value = "稳压芯片"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "学习资源"; Value = "www.ooocke.com"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "版权归属"; Value = "源创客"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=DGND Pin=C2-1
+Added Pin To Net: NetName=5V Pin=C2-2
+Added Pin To Net: NetName=DGND Pin=V1-1
+Added Pin To Net: NetName=5V Pin=V1-2
+Added Pin To Net: NetName=NetC1_1 Pin=V1-3
+Added Member To Class: ClassName=Sheet1 Member=Component V1 AMS1117-3V3

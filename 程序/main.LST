@@ -1,0 +1,49 @@
+C51 COMPILER V9.52.0.0   MAIN                                                              02/22/2018 18:17:16 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: C:\Keil_v4\C51\BIN\C51.EXE main.c LARGE OPTIMIZE(2,SIZE) BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include "stc15.h"
+   2          #include "tm1620.h"
+   3          #include "delay.h"
+   4          #include "intrins.h"
+   5          #include "ds18b20.h"
+   6          #include "delay.h"
+   7          #include "PTC.h"
+   8          #include "buzzer.h"
+   9          #include "button.h"
+  10          #include "Heartbeat.h"
+  11          void main(void)
+  12          {
+  13   1        unsigned char i=0;
+  14   1        TM1620_Init();//初始化数码管驱动芯片
+  15   1        Button_Init();//初始化按钮
+  16   1        Buzzer_Init();//初始化蜂鸣器
+  17   1        PTC_Init();//初始化PTC加热元件
+  18   1        DS18B20_Convert();//开启温度转换
+  19   1        Buzzer_Short_Tweet(1);//开机鸣叫  
+  20   1        HeartBeat_Init();//系统心跳初始化
+  21   1         
+  22   1        while(1)
+  23   1        {
+  24   2      
+  25   2        }
+  26   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     31    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----       1
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,65 @@
+C51 COMPILER V9.52.0.0   BUTTON                                                            02/22/2018 18:27:58 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE BUTTON
+OBJECT MODULE PLACED IN button.OBJ
+COMPILER INVOKED BY: C:\Keil_v4\C51\BIN\C51.EXE button.c LARGE OPTIMIZE(2,SIZE) BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include "button.h"
+   2          #include "stc15.h"
+   3          #include "buzzer.h"
+   4          #include "Heartbeat.h"
+   5          void Button_Init(void)//初始化按键
+   6          {
+   7   1        INT_CLKO |= 0x20;               //(EX3 = 1)使能INT3中断
+   8   1        INT_CLKO |= 0x10;               //(EX2 = 1)使能INT2中断
+   9   1        EA = 1;
+  10   1      }
+  11          
+  12          
+  13          
+  14          
+  15          
+  16          
+  17          //-----------------------------------------------
+  18          //中断服务程序
+  19          void exint2() interrupt 10          //INT2中断入口
+  20          {
+  21   1        EA=0;
+  22   1        if(!Buzzer_IsBusy())Buzzer_Short_Tweet(1);//开机鸣叫  
+  23   1        TemperatureSetMode_SetUP();//设置温度上升一度
+  24   1      //  INT_CLKO &= 0xEF;               //若需要手动清除中断标志,可先关闭中断,此时系统会自动清除内部的中断标志
+  25   1      //  INT_CLKO |= 0x10;               //然后再开中断即可
+  26   1        EA=1;
+  27   1      }
+  28          
+  29          
+  30          
+  31          
+  32          //-----------------------------------------------
+  33          //中断服务程序
+  34          void exint3() interrupt 11          //INT3中断入口
+  35          {
+  36   1        EA=0;
+  37   1        if(!Buzzer_IsBusy())Buzzer_Short_Tweet(1);//开机鸣叫  
+  38   1        TemperatureSetMode_SetDOWN();//设置温度下降一度
+  39   1      //  INT_CLKO &= 0xDF;               //若需要手动清除中断标志,可先关闭中断,此时系统会自动清除内部的中断标志
+  40   1      //  INT_CLKO |= 0x20;               //然后再开中断即可
+  41   1        EA=1;
+  42   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    155    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

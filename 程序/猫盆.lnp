@@ -1,0 +1,13 @@
+"STARTUP.obj",
+"main.obj",
+"ds18b20.obj",
+"tm1620.obj",
+"EEPROM.obj",
+"delay.obj",
+"PTC.obj",
+"buzzer.obj",
+"button.obj",
+"Heartbeat.obj",
+"timer0.obj" 
+TO "√®≈Ë" 
+RAMSIZE(256) 

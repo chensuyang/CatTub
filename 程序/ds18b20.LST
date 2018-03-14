@@ -1,0 +1,204 @@
+C51 COMPILER V9.52.0.0   DS18B20                                                           02/22/2018 18:27:57 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE DS18B20
+OBJECT MODULE PLACED IN ds18b20.OBJ
+COMPILER INVOKED BY: C:\Keil_v4\C51\BIN\C51.EXE ds18b20.c LARGE OPTIMIZE(2,SIZE) BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include "ds18b20.h"
+   2          #include "stc15.h"
+   3          #include "delay.h"
+   4          float New_Temperature=0;//当前温度
+   5          sbit ds18b20=P1^2;
+   6          unsigned int HeartBeat_Cnt=0;//系统心跳计数(用于分频)
+   7          bit IsDS18B20Converting=0;//DS18B20是否忙碌(是否正在转换状态)
+   8          
+   9          float temp=0;
+  10          bit no;
+  11          
+  12          
+  13          void DS18B20_Reset()//复位DS18B20
+  14          {
+  15   1          ds18b20=0;     //拉低DQ总线开始复位 
+  16   1          Delay720us();     //保持DQ低大约720uS     
+  17   1          ds18b20=1;     //释放DQ位    
+  18   1      }
+  19          
+  20          bit DS18B20_WaitPresence()//等待芯片复位应答信号
+  21          {
+  22   1        bit k;
+  23   1        Delay50us();
+  24   1        if(ds18b20==0)k=1;
+  25   1        else k=0;
+  26   1        Delay350us();
+  27   1        return k;
+  28   1          
+  29   1      }
+  30          
+  31          bit DS18B20_ReadBit()//读一位数据
+  32          {
+  33   1          bit dat;    
+  34   1          ds18b20=0; 
+  35   1          Delay1us();//延时1微秒
+  36   1          ds18b20=1; 
+  37   1          Delay12us();//延时12微秒
+  38   1          dat=ds18b20;    
+  39   1          Delay50us();//延时50微秒
+  40   1          return dat;
+  41   1      }
+  42          
+  43          
+  44          unsigned char DS18B20_ReadByte()//读一字节
+  45          {
+  46   1          unsigned char i,j,dat;
+  47   1      
+  48   1          dat=0;
+  49   1      
+  50   1          for(i=1;i<=8;i++)
+  51   1          {
+  52   2              j=DS18B20_ReadBit();
+  53   2              dat=(j<<7) | (dat>>1);
+  54   2          }
+  55   1      
+C51 COMPILER V9.52.0.0   DS18B20                                                           02/22/2018 18:27:57 PAGE 2   
+
+  56   1          return dat;
+  57   1      }
+  58          
+  59          
+  60          void DS18B20_WriteByte(unsigned char dat)//写一字节
+  61          {
+  62   1          unsigned char j;
+  63   1          bit testb;
+  64   1      
+  65   1          for(j=1;j<=8;j++)
+  66   1          {
+  67   2              testb=dat & 0x01;
+  68   2              dat=dat>>1;
+  69   2      
+  70   2              if(testb)
+  71   2              {
+  72   3                  ds18b20=0;         
+  73   3                  Delay5us();//延时5微秒
+  74   3                  ds18b20=1;          
+  75   3                  Delay70us();//延时70微秒
+  76   3              }
+  77   2              else
+  78   2              {            
+  79   3                  ds18b20=0;          
+  80   3                  Delay64us();//延时70微秒
+  81   3                  ds18b20=1;          
+  82   3                 Delay1us();//延时5微秒
+  83   3              }
+  84   2          }
+  85   1      }
+  86          
+  87          bit DS18B20_Convert()//温度转换
+  88          {    
+  89   1          DS18B20_Reset();
+  90   1          if(DS18B20_WaitPresence()==1)
+  91   1        {
+  92   2            Delay(1);
+  93   2            DS18B20_WriteByte(0xcc);//skip rom
+  94   2            DS18B20_WriteByte(0x44);//convert   
+  95   2          return 1;
+  96   2        }
+  97   1        else
+  98   1        {   
+  99   2          return 0;
+ 100   2        }
+ 101   1      }
+ 102          
+ 103          
+ 104          bit DS18B20_ReadFlash()//读存储
+ 105          {    
+ 106   1          unsigned int nLsb,nMsb;
+ 107   1          unsigned int temp1;
+ 108   1          DS18B20_Reset();  
+ 109   1          if(DS18B20_WaitPresence()==1)
+ 110   1        {
+ 111   2            Delay(1);
+ 112   2            DS18B20_WriteByte(0xcc);//skip rom
+ 113   2            DS18B20_WriteByte(0xbe);//convert
+ 114   2            nLsb=DS18B20_ReadByte();//LSB
+ 115   2            nMsb=DS18B20_ReadByte();//MSB   
+ 116   2            if(no==1) return 1;   
+ 117   2            temp1=((nMsb&0x0f)<<8)+nLsb;
+C51 COMPILER V9.52.0.0   DS18B20                                                           02/22/2018 18:27:57 PAGE 3   
+
+ 118   2            if(nMsb&0x80)//如果是负数
+ 119   2            {
+ 120   3              temp=((((~temp1)+1)&0xfff)+1)*0.0625;
+ 121   3              temp=-1*temp;
+ 122   3            }
+ 123   2            else
+ 124   2            {
+ 125   3                temp=temp1*0.0625f;
+ 126   3            }
+ 127   2            
+ 128   2          return 1;
+ 129   2        }
+ 130   1        else
+ 131   1        {
+ 132   2          return 0;
+ 133   2        }
+ 134   1      }
+ 135          
+ 136          
+ 137          
+ 138          float DS18B20_Get_Temperature(void)//读取转换完成的温度
+ 139          {
+ 140   1        return temp;
+ 141   1      }
+ 142          
+ 143          
+ 144          
+ 145          void DS18B20_HeartBeat_IRQ(void)//DS18B20系统心跳处理函数
+ 146          {
+ 147   1        EA=0;
+ 148   1        if(HeartBeat_Cnt<80)//如果系统心跳计数小于80,说明计数未完成
+ 149   1        {
+ 150   2          HeartBeat_Cnt++;
+ 151   2          return;
+ 152   2        }
+ 153   1        else//如果计数已到,说明分频完成,可以开始DS18B20的心跳
+ 154   1        {
+ 155   2          HeartBeat_Cnt=0;//清空计数
+ 156   2          if(!IsDS18B20Converting)//如果当前不处于转换中(初始状态)
+ 157   2          {
+ 158   3            DS18B20_Convert();//开启温度转换,等待下一次读取
+ 159   3          }
+ 160   2          else
+ 161   2          {
+ 162   3            DS18B20_ReadFlash();//读取温度
+ 163   3            New_Temperature=DS18B20_Get_Temperature();//将温度放到全局变量等待取用
+ 164   3            IsDS18B20Converting=0;//去除转换的状态
+ 165   3            
+ 166   3          }
+ 167   2        }
+ 168   1        EA=1;
+ 169   1      }
+ 170          
+ 171          
+ 172          float DS18B20_Get_New_Temperature(void)//获取最新温度
+ 173          {
+ 174   1        return New_Temperature;
+ 175   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    532    ----
+C51 COMPILER V9.52.0.0   DS18B20                                                           02/22/2018 18:27:57 PAGE 4   
+
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     10      11
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      2       3
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

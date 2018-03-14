@@ -1,0 +1,56 @@
+Added Component: Designator=PTC2_+(TEST 2.6)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "BOM名称"; Value = "10P接插件"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "学习资源"; Value = "www.ooocke.com"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "版权归属"; Value = "源创客"; VariantName = "[No Variations]"
+Added Component: Designator=PTC2(TEST 2.6)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "BOM名称"; Value = "10P接插件"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "学习资源"; Value = "www.ooocke.com"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "版权归属"; Value = "源创客"; VariantName = "[No Variations]"
+Added Component: Designator=PTC3_+(TEST 2.6)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "BOM名称"; Value = "10P接插件"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "学习资源"; Value = "www.ooocke.com"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "版权归属"; Value = "源创客"; VariantName = "[No Variations]"
+Added Component: Designator=PTC3(TEST 2.6)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "BOM名称"; Value = "10P接插件"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "学习资源"; Value = "www.ooocke.com"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "版权归属"; Value = "源创客"; VariantName = "[No Variations]"
+Added Component: Designator=PTC4_+(TEST 2.6)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "BOM名称"; Value = "10P接插件"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "学习资源"; Value = "www.ooocke.com"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "版权归属"; Value = "源创客"; VariantName = "[No Variations]"
+Added Component: Designator=PTC4(TEST 2.6)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "BOM名称"; Value = "10P接插件"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "学习资源"; Value = "www.ooocke.com"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "版权归属"; Value = "源创客"; VariantName = "[No Variations]"
+Added Component: Designator=PTC5_+(TEST 2.6)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "BOM名称"; Value = "10P接插件"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "学习资源"; Value = "www.ooocke.com"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "版权归属"; Value = "源创客"; VariantName = "[No Variations]"
+Added Component: Designator=PTC5(TEST 2.6)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "BOM名称"; Value = "10P接插件"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "学习资源"; Value = "www.ooocke.com"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "版权归属"; Value = "源创客"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=PTC2 Pin=PTC2-1
+Added Pin To Net: NetName=12V Pin=PTC2_+-1
+Added Pin To Net: NetName=PTC3 Pin=PTC3-1
+Added Pin To Net: NetName=12V Pin=PTC3_+-1
+Added Pin To Net: NetName=PTC4 Pin=PTC4-1
+Added Pin To Net: NetName=12V Pin=PTC4_+-1
+Added Pin To Net: NetName=PTC5 Pin=PTC5-1
+Added Pin To Net: NetName=12V Pin=PTC5_+-1
+Added Member To Class: ClassName=Sheet1 Member=Component PTC2_+ 冷压插片
+Added Member To Class: ClassName=Sheet1 Member=Component PTC2 冷压插片
+Added Member To Class: ClassName=Sheet1 Member=Component PTC3_+ 冷压插片
+Added Member To Class: ClassName=Sheet1 Member=Component PTC3 冷压插片
+Added Member To Class: ClassName=Sheet1 Member=Component PTC4_+ 冷压插片
+Added Member To Class: ClassName=Sheet1 Member=Component PTC4 冷压插片
+Added Member To Class: ClassName=Sheet1 Member=Component PTC5_+ 冷压插片
+Added Member To Class: ClassName=Sheet1 Member=Component PTC5 冷压插片

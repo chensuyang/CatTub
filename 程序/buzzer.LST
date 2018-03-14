@@ -1,0 +1,118 @@
+C51 COMPILER V9.52.0.0   BUZZER                                                            02/22/2018 18:27:57 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE BUZZER
+OBJECT MODULE PLACED IN buzzer.OBJ
+COMPILER INVOKED BY: C:\Keil_v4\C51\BIN\C51.EXE buzzer.c LARGE OPTIMIZE(2,SIZE) BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include "stc15.h"
+   2          #include "buzzer.h"
+   3          
+   4          unsigned int buzzer_tweet_residue_time=0;//鸣叫剩余次数
+   5          unsigned char buzzer_tweet_time_cnt=0;//时间计数,用于产生短鸣和长鸣
+   6          unsigned char buzzer_tweet_type=0;//鸣叫类型
+   7          bit buzzer_IsBusyFlag=0;//蜂鸣器工作标志位
+   8          #define BUZZER_SHORT_TWEET 0 //短鸣
+   9          #define BUZZER_LONG_TWEET 1 //长鸣
+  10          
+  11          sbit buzzer_pin=P5^5;
+  12          
+  13          
+  14          
+  15          bit Buzzer_IsBusy(void)//获取蜂鸣器工作状态
+  16          {
+  17   1        return buzzer_IsBusyFlag;
+  18   1      }
+  19          
+  20          void Buzzer_Init(void)//初始化蜂鸣器
+  21          {
+  22   1        P5M0 |= 0x10;  //设置P5.5为推挽输出模式
+  23   1        P5M1 |= 0x00;
+  24   1        buzzer_pin=1;
+  25   1      }
+  26          
+  27          
+  28          void Buzzer_On(void)//开启蜂鸣器
+  29          {
+  30   1        buzzer_pin=0;
+  31   1      }
+  32          
+  33          
+  34          void Buzzer_Off(void)//关闭蜂鸣器
+  35          {
+  36   1        buzzer_pin=1;
+  37   1      }
+  38          
+  39          
+  40          void Buzzer_Short_Tweet(unsigned char time)//蜂鸣器短鸣(time=鸣叫次数)
+  41          {
+  42   1        buzzer_IsBusyFlag=1;//设置蜂鸣器正在工作中
+  43   1        buzzer_tweet_residue_time=time*2;//设置剩余次数
+  44   1        buzzer_tweet_type=BUZZER_SHORT_TWEET;//设置鸣叫类型
+  45   1      }
+  46          
+  47          
+  48          void Buzzer_Long_Tweet(unsigned char time)//蜂鸣器长鸣(time=鸣叫次数)
+  49          {
+  50   1        buzzer_IsBusyFlag=1;//设置蜂鸣器正在工作中
+  51   1        buzzer_tweet_residue_time=time*2;//设置剩余次数
+  52   1        buzzer_tweet_type=BUZZER_LONG_TWEET;//设置鸣叫类型
+  53   1      }
+  54          
+  55          
+C51 COMPILER V9.52.0.0   BUZZER                                                            02/22/2018 18:27:57 PAGE 2   
+
+  56          void Buzzer_Tweet_HeartBeat_IRQ(void)//蜂鸣器鸣叫系统心跳函数
+  57          {
+  58   1        if(buzzer_tweet_residue_time>0)//如果还有剩余的鸣叫次数
+  59   1        {
+  60   2          if(buzzer_tweet_type==BUZZER_SHORT_TWEET)//如果当前是短鸣
+  61   2          {
+  62   3            if(buzzer_tweet_time_cnt<1)
+  63   3            {
+  64   4              buzzer_tweet_time_cnt++;//增加时间计数
+  65   4            }
+  66   3            else
+  67   3            {
+  68   4              buzzer_pin=!buzzer_pin;//取反
+  69   4              buzzer_tweet_time_cnt=0;//清空时间计数
+  70   4              buzzer_tweet_residue_time--;//减少剩余鸣叫次数
+  71   4            }
+  72   3          }
+  73   2          else//如果当前是长鸣
+  74   2          {
+  75   3            if(buzzer_tweet_time_cnt<20)
+  76   3            {
+  77   4              buzzer_tweet_time_cnt++;//增加时间计数
+  78   4            }
+  79   3            else
+  80   3            {
+  81   4              buzzer_pin=!buzzer_pin;//取反
+  82   4              buzzer_tweet_time_cnt=0;//清空时间计数
+  83   4              buzzer_tweet_residue_time--;//减少剩余鸣叫次数
+  84   4            }
+  85   3          }
+  86   2        }
+  87   1        else//如果已经没有鸣叫次数
+  88   1        {
+  89   2          buzzer_pin=1;//关闭蜂鸣器
+  90   2          buzzer_IsBusyFlag=0;//设置蜂鸣器停止工作
+  91   2        }
+  92   1        
+  93   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    193    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =      4       2
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

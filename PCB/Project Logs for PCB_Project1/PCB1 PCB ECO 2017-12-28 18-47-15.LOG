@@ -1,0 +1,14 @@
+Added Component: Designator=PTC1_+(TEST 2.6)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "BOM名称"; Value = "10P接插件"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "学习资源"; Value = "www.ooocke.com"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "版权归属"; Value = "源创客"; VariantName = "[No Variations]"
+Added Component: Designator=PTC1(TEST 2.6)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "BOM名称"; Value = "10P接插件"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "学习资源"; Value = "www.ooocke.com"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "版权归属"; Value = "源创客"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=PTC1 Pin=PTC1-1
+Added Pin To Net: NetName=12V Pin=PTC1_+-1
+Added Member To Class: ClassName=Sheet1 Member=Component PTC1_+ 冷压插片
+Added Member To Class: ClassName=Sheet1 Member=Component PTC1 冷压插片

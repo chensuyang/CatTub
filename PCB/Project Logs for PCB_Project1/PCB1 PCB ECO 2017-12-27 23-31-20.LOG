@@ -1,0 +1,80 @@
+Change Component Designator: OldDesignator=JP2 NewDesignator=PTC1
+Change Component Designator: OldDesignator=JP3 NewDesignator=PTC2
+Change Component Designator: OldDesignator=JP4 NewDesignator=PTC3
+Change Component Designator: OldDesignator=JP5 NewDesignator=PTC4
+Change Component Designator: OldDesignator=JP6 NewDesignator=PTC1_+
+Change Component Designator: OldDesignator=JP7 NewDesignator=PTC2_+
+Change Component Designator: OldDesignator=JP8 NewDesignator=PTC3_+
+Change Component Designator: OldDesignator=JP9 NewDesignator=PTC4_+
+Added Component: Designator=PTC5_+(DJ610-4.8x0.5x14)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "BOM名称"; Value = "10P接插件"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "学习资源"; Value = "www.ooocke.com"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "版权归属"; Value = "源创客"; VariantName = "[No Variations]"
+Added Component: Designator=PTC5(DJ610-4.8x0.5x14)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "BOM名称"; Value = "10P接插件"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "学习资源"; Value = "www.ooocke.com"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "版权归属"; Value = "源创客"; VariantName = "[No Variations]"
+Added Component: Designator=Q3(TO252)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "BOM名称"; Value = "N沟场效应管"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "学习资源"; Value = "www.ooocke.com"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "版权归属"; Value = "源创客"; VariantName = "[No Variations]"
+Added Component: Designator=Q4(TO252)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "BOM名称"; Value = "N沟场效应管"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "学习资源"; Value = "www.ooocke.com"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "版权归属"; Value = "源创客"; VariantName = "[No Variations]"
+Added Component: Designator=Q5(TO252)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "BOM名称"; Value = "N沟场效应管"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "学习资源"; Value = "www.ooocke.com"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "版权归属"; Value = "源创客"; VariantName = "[No Variations]"
+Added Component: Designator=Q6(TO252)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "BOM名称"; Value = "N沟场效应管"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "学习资源"; Value = "www.ooocke.com"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "版权归属"; Value = "源创客"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=24v Pin=PTC5_+-1
+Added Pin To Net: NetName=24v Pin=PTC5_+-1
+Added Pin To Net: NetName=NetQ2_1 Pin=Q3-1
+Added Pin To Net: NetName=AGND Pin=Q3-3
+Added Pin To Net: NetName=NetQ2_1 Pin=Q4-1
+Added Pin To Net: NetName=AGND Pin=Q4-3
+Added Pin To Net: NetName=NetQ2_1 Pin=Q5-1
+Added Pin To Net: NetName=AGND Pin=Q5-3
+Added Pin To Net: NetName=NetQ2_1 Pin=Q6-1
+Added Pin To Net: NetName=AGND Pin=Q6-3
+Added Pin To Net: NetName=NetQ2_1 Pin=R7-1
+Added Pin To Net: NetName=TEMP_UP_BUTTON Pin=SW2-1
+Added Pin To Net: NetName=NetQ2_1 Pin=U1-16
+Change Net Name : Old Net Name=24v New Net Name=12V
+Change Net Name : Old Net Name=24v_in New Net Name=12V_in
+Change Net Name : Old Net Name=NetQ2_1 New Net Name=PTC_OUT
+Added Pin To Net: NetName=PTC1 Pin=PTC1-1
+Added Pin To Net: NetName=PTC1 Pin=PTC1-1
+Added Pin To Net: NetName=PTC1 Pin=Q2-2
+Added Net: Name=PTC1
+Added Pin To Net: NetName=PTC2 Pin=PTC2-1
+Added Pin To Net: NetName=PTC2 Pin=PTC2-1
+Added Pin To Net: NetName=PTC2 Pin=Q3-2
+Added Net: Name=PTC2
+Added Pin To Net: NetName=PTC3 Pin=PTC3-1
+Added Pin To Net: NetName=PTC3 Pin=PTC3-1
+Added Pin To Net: NetName=PTC3 Pin=Q4-2
+Added Net: Name=PTC3
+Added Pin To Net: NetName=PTC4 Pin=PTC4-1
+Added Pin To Net: NetName=PTC4 Pin=PTC4-1
+Added Pin To Net: NetName=PTC4 Pin=Q5-2
+Added Net: Name=PTC4
+Added Pin To Net: NetName=PTC5 Pin=PTC5-1
+Added Pin To Net: NetName=PTC5 Pin=PTC5-1
+Added Pin To Net: NetName=PTC5 Pin=Q6-2
+Added Net: Name=PTC5
+Added Member To Class: ClassName=Sheet1 Member=Component PTC5_+ 冷压插片
+Added Member To Class: ClassName=Sheet1 Member=Component PTC5 冷压插片
+Added Member To Class: ClassName=Sheet1 Member=Component Q3 IRF3710
+Added Member To Class: ClassName=Sheet1 Member=Component Q4 IRF3710
+Added Member To Class: ClassName=Sheet1 Member=Component Q5 IRF3710
+Added Member To Class: ClassName=Sheet1 Member=Component Q6 IRF3710

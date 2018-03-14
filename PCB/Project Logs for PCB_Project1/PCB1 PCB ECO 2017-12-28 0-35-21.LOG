@@ -1,0 +1,7 @@
+Removed Pin From Net: NetName=GRID2 Pin=P3-2
+Removed Pin From Net: NetName=GRID1 Pin=U2-16
+Added Pin To Net: NetName=GRID1 Pin=U2-17
+Change Net Name : Old Net Name=GRID2 New Net Name=DGND
+Added Pin To Net: NetName=GRID2 Pin=P3-2
+Added Pin To Net: NetName=GRID2 Pin=U2-16
+Added Net: Name=GRID2
