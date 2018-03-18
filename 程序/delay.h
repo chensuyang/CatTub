@@ -16,5 +16,5 @@ void Delay70us();		//@20.000MHz
 
 void Delay64us();		//@20.000MHz
 
-
+void Delay_ms(unsigned int time);//—” ±n∫¡√Î
 void Delay(unsigned int time);//—” ±nŒ¢√Î

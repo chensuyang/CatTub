@@ -70,4 +70,23 @@ void Delay(unsigned int time)//—” ±nŒ¢√Î
 	for(i=0;i<time;i++)Delay1us();
 }
 
+void Delay1ms()		//@20.000MHz
+{
+	unsigned char i, j;
+
+	i = 20;
+	j = 113;
+	do
+	{
+		while (--j);
+	} while (--i);
+}
+
+
+void Delay_ms(unsigned int time)//—” ±n∫¡√Î
+{
+	unsigned int i;
+	for(i=0;i<time;i++)Delay1ms();
+}
+
 

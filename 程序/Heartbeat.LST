@@ -1,9 +1,9 @@
-C51 COMPILER V9.52.0.0   HEARTBEAT                                                         02/22/2018 18:27:58 PAGE 1   
+C51 COMPILER V9.52.0.0   HEARTBEAT                                                         03/17/2018 03:06:34 PAGE 1   
 
 
 C51 COMPILER V9.52.0.0, COMPILATION OF MODULE HEARTBEAT
 OBJECT MODULE PLACED IN Heartbeat.OBJ
-COMPILER INVOKED BY: C:\Keil_v4\C51\BIN\C51.EXE Heartbeat.c LARGE OPTIMIZE(2,SIZE) BROWSE DEBUG OBJECTEXTEND TABS(2)
+COMPILER INVOKED BY: C:\Keil_v4\C51\BIN\C51.EXE Heartbeat.c LARGE OPTIMIZE(0,SIZE) BROWSE DEBUG OBJECTEXTEND TABS(2)
 
 line level    source
 
@@ -14,67 +14,112 @@ line level    source
    5          #include "ds18b20.h"
    6          #include "EEPROM.h"
    7          #include "buzzer.h"
-   8          float Set_Temperature=0;//设定温度
-   9          bit IsTemperatureSetMode=0;//处于设定温度模式
-  10          unsigned int TemperatureSetModeTimeOutCnt=0;//设定温度模式超时计数
-  11          
-  12          void HeartBeat_Init(void)//初始化系统心跳
-  13          {
-  14   1        Timer0_Init();//初始化定时器0
-  15   1        Set_Temperature=EEPROM_Read_SetTemperature();//读取设定温度值
-  16   1      }
-  17          
-  18          
-  19          
-  20          void HeartBeat_IRQ(void)//系统心跳中断
-  21          {
-  22   1        Buzzer_Tweet_HeartBeat_IRQ();//蜂鸣器鸣叫系统心跳处理函数
-  23   1        DS18B20_HeartBeat_IRQ();//DS18B20系统心跳处理函数
-  24   1        if(!IsTemperatureSetMode)//如果不是在设定温度模式(日常温度显示状态)
-  25   1        {
-  26   2          TM1620_Show_Temperature(DS18B20_Get_New_Temperature());//显示最新实时温度
-  27   2          TM1620_Write_Digitron_Data(3,0x00);//不点亮温度设置模式LED
-  28   2          TM1620_display_on(3);//发出显示
-  29   2        }
-  30   1        else
-  31   1        {
-  32   2          TM1620_Show_Temperature(Set_Temperature);//显示设置温度
-  33   2          //TM1620_Write_Digitron_Data(3,0x80);//点亮温度设置模式LED
-  34   2          TM1620_display_on(3);//发出显示
-  35   2          TemperatureSetModeTimeOutCnt++;//设定温度模式超时计数++
-  36   2          if(TemperatureSetModeTimeOutCnt>150)//如果设定温度模式超时计数大于1.5秒
-  37   2          {
-  38   3            TemperatureSetModeTimeOutCnt=0;//清空计数
-  39   3            IsTemperatureSetMode=0;//退出设定温度模式
-  40   3          }
-  41   2        }
-  42   1        
-  43   1      }
-  44          
-  45          void TemperatureSetMode_SetUP(void)//设置温度上升一度
-  46          {
-  47   1        IsTemperatureSetMode=1;//设置当前为设置温度模式
-  48   1        TemperatureSetModeTimeOutCnt=0;//清空设置温度模式的超时计数(重新开始算超时时间)
-  49   1        if(Set_Temperature<55)Set_Temperature++;
-  50   1        EEPROM_Write_SetTemperature(Set_Temperature);
-  51   1      }
-  52          
-  53          void TemperatureSetMode_SetDOWN(void)//设置温度下降一度
-  54          {
-  55   1        IsTemperatureSetMode=1;//设置当前为设置温度模式
-C51 COMPILER V9.52.0.0   HEARTBEAT                                                         02/22/2018 18:27:58 PAGE 2   
+   8          #include "math.h"
+   9          #include "PTC.h"
+  10          float Set_Temperature=0;//设定温度
+  11          bit IsTemperatureSetMode=0;//处于设定温度模式
+  12          unsigned int TemperatureSetModeTimeOutCnt=0;//设定温度模式超时计数
+  13          
+  14          float PTC_Power=0;//PTC功率
+  15          
+  16          
+  17          int current_error=0; //当前差值
+  18          int last_error=0; //上次差值
+  19          int prev_error=0; //上上次差值
+  20          
+  21          float PID_kp =40;//PID的比例系数
+  22          float PID_ki =80;//PID的积分系数
+  23          float PID_kd =50;//PID的微分系数
+  24          double PID_P =0;//PID的比例计算结果
+  25          double PID_I =0;//PID的积分计算结果
+  26          double PID_D =0;//PID的微分计算结果
+  27          double PID_PWM =0;//PID的PWM输出数值
+  28          
+  29          void HeartBeat_Init(void)//初始化系统心跳
+  30          {
+  31   1        Timer0_Init();//初始化定时器0
+  32   1        Set_Temperature=EEPROM_Read_SetTemperature();//读取设定温度值
+  33   1      }
+  34          
+  35          
+  36          
+  37          void HeartBeat_IRQ(void)//系统心跳中断
+  38          {
+  39   1        /*Buzzer_Tweet_HeartBeat_IRQ();//蜂鸣器鸣叫系统心跳处理函数
+  40   1        DS18B20_HeartBeat_IRQ();//DS18B20系统心跳处理函数
+  41   1        if(!IsTemperatureSetMode)//如果不是在设定温度模式(日常温度显示状态)
+  42   1        {
+  43   1          TM1620_Show_Temperature(DS18B20_Get_New_Temperature());//显示最新实时温度
+  44   1          TM1620_Write_Digitron_Data(3,0x00);//不点亮温度设置模式LED
+  45   1          TM1620_display_on(3);//发出显示
+  46   1        }
+  47   1        else
+  48   1        {
+  49   1          TM1620_Show_Temperature(Set_Temperature);//显示设置温度
+  50   1          //TM1620_Write_Digitron_Data(3,0x80);//点亮温度设置模式LED
+  51   1          TM1620_display_on(3);//发出显示
+  52   1          TemperatureSetModeTimeOutCnt++;//设定温度模式超时计数++
+  53   1          if(TemperatureSetModeTimeOutCnt>150)//如果设定温度模式超时计数大于1.5秒
+  54   1          {
+  55   1            TemperatureSetModeTimeOutCnt=0;//清空计数
+C51 COMPILER V9.52.0.0   HEARTBEAT                                                         03/17/2018 03:06:34 PAGE 2   
 
-  56   1        TemperatureSetModeTimeOutCnt=0;//清空设置温度模式的超时计数(重新开始算超时时间)
-  57   1        if(Set_Temperature>10)Set_Temperature--;
-  58   1        EEPROM_Write_SetTemperature(Set_Temperature);
-  59   1      }
-  60          
+  56   1            IsTemperatureSetMode=0;//退出设定温度模式
+  57   1          }
+  58   1        }*/
+  59   1        
+  60   1      }
+  61          
+  62          void TemperatureSetMode_SetUP(void)//设置温度上升一度
+  63          {
+  64   1        IsTemperatureSetMode=1;//设置当前为设置温度模式
+  65   1        TemperatureSetModeTimeOutCnt=0;//清空设置温度模式的超时计数(重新开始算超时时间)
+  66   1        if(Set_Temperature<55)Set_Temperature++;
+  67   1      }
+  68          
+  69          void TemperatureSetMode_SetDOWN(void)//设置温度下降一度
+  70          {
+  71   1        IsTemperatureSetMode=1;//设置当前为设置温度模式
+  72   1        TemperatureSetModeTimeOutCnt=0;//清空设置温度模式的超时计数(重新开始算超时时间)
+  73   1        if(Set_Temperature>10)Set_Temperature--;
+  74   1      }
+  75          
+  76          
+  77          
+  78          void Temperature_Control(void)//温度控制
+  79          {
+  80   1        if(!IsTemperatureSetMode)//如果现在不处于温度控制模式
+  81   1        {
+  82   2          prev_error = last_error;//更新每次的差值
+  83   2          last_error = current_error;//更新每次的差值
+  84   2          current_error = fabs(Set_Temperature) - fabs(DS18B20_Get_Temperature());//更新每次的差值
+  85   2          PID_P = PID_kp * (current_error - last_error); //比例 P 输出公式
+  86   2          PID_I = PID_ki * current_error; //积分 I 输出公式
+  87   2          if (PID_I > PTC_CONTROL_PID_I_MAX)PID_I = PTC_CONTROL_PID_I_MAX;//对积分上限进行限制
+  88   2          if (PID_I < PTC_CONTROL_PID_I_MIN)PID_I = PTC_CONTROL_PID_I_MIN;//对积分下限进行限制
+  89   2          PID_D = PID_kd * (current_error - 2 * last_error + prev_error); //微分 D 输出公式
+  90   2          PID_PWM=PID_P+PID_I+PID_D;
+  91   2          if (PID_PWM<0 || current_error<0)
+  92   2          {
+  93   3            PID_PWM = fabs(PID_PWM);//保证PWM永远为正值
+  94   3            PTC_Off();//关闭PTC
+  95   3          }
+  96   2          else
+  97   2          {
+  98   3            if (PID_PWM > PTC_PWM_MAX)PID_PWM = PTC_PWM_MAX; //限制PTC的最大功率
+  99   3            if (PID_PWM < PTC_PWM_MIN)PID_PWM = PTC_PWM_MIN; //限制PTC的最小功率
+ 100   3            PTC_On(PID_PWM);//提交数据到PTC
+ 101   3          }
+ 102   2        }
+ 103   1      }
+ 104          
+ 105          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    219    ----
+   CODE SIZE        =    551    ----
    CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =      6    ----
+   XDATA SIZE       =     44    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----

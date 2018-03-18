@@ -144,7 +144,6 @@ float DS18B20_Get_Temperature(void)//读取转换完成的温度
 
 void DS18B20_HeartBeat_IRQ(void)//DS18B20系统心跳处理函数
 {
-	EA=0;
 	if(HeartBeat_Cnt<80)//如果系统心跳计数小于80,说明计数未完成
 	{
 		HeartBeat_Cnt++;
@@ -156,6 +155,7 @@ void DS18B20_HeartBeat_IRQ(void)//DS18B20系统心跳处理函数
 		if(!IsDS18B20Converting)//如果当前不处于转换中(初始状态)
 		{
 			DS18B20_Convert();//开启温度转换,等待下一次读取
+			IsDS18B20Converting=!IsDS18B20Converting;
 		}
 		else
 		{
@@ -165,7 +165,6 @@ void DS18B20_HeartBeat_IRQ(void)//DS18B20系统心跳处理函数
 			
 		}
 	}
-	EA=1;
 }
 
 
